@@ -21,7 +21,27 @@ class TranslationController extends Controller
     }
     
     /**
-     * Display a listing of the resource.
+     * @OA\SecurityScheme(
+     *     securityScheme="sanctum",
+     *     type="http",
+     *     scheme="bearer"
+     * )
+     */
+
+    /**
+     * Get a list of translations.
+     *
+     * @OA\Get(
+     *     path="/api/translations",
+     *     tags={"translations"},
+     *     summary="Get all translations",
+     *     security={{"sanctum":{}}},
+     *     description="Returns a list of translations",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -29,7 +49,49 @@ class TranslationController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/translations",
+     *     summary="Create a new translation",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"locale", "key", "content", "tags"},
+     *             @OA\Property(property="locale", type="string", example="eng"),
+     *             @OA\Property(property="key", type="string", example="welcome_message"),
+     *             @OA\Property(property="content", type="string", example="{\`en\`:\`Welcome\`,\`es\`:\`Bienvenido\`}"),
+     *             @OA\Property(
+     *                 property="tags",
+     *                 type="array",
+     *                 @OA\Items(type="string"),
+     *                 example={"greeating", "welcome"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Translation created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="locale", type="string", example="eng"),
+     *             @OA\Property(property="key", type="string", example="welcome_message"),
+     *             @OA\Property(property="content", type="string", example="{\`en\`:\`Welcome\`,\`es\`:\`Bienvenido\`}"),
+     *             @OA\Property(
+     *                 property="tags",
+     *                 type="array",
+     *                 @OA\Items(type="string"),
+     *                 example={"greeating", "welcome"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function store(StoreTranslationRequest $request): JsonResponse
     {
@@ -42,15 +104,98 @@ class TranslationController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/translations/{id}",
+     *     summary="Get a specific translation",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *         description="Translation ID"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Translation not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Translation not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
         return response()->json($this->translationService->getTranslationById($id));
     }
 
+   
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/translations/{id}",
+     *     summary="Update an existing translation",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *         description="Translation ID"
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"locale", "key", "content", "tags"},
+     *             @OA\Property(property="locale", type="string", example="eng"),
+     *             @OA\Property(property="key", type="string", example="welcome_message"),
+     *             @OA\Property(property="content", type="string", example="{\`en\`:\`Welcome\`,\`es\`:\`Bienvenido\`}"),
+     *             @OA\Property(
+     *                 property="tags",
+     *                 type="array",
+     *                 @OA\Items(type="string"),
+     *                 example={"greeating", "welcome"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Translation updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="locale", type="string", example="eng"),
+     *             @OA\Property(property="key", type="string", example="welcome_message"),
+     *             @OA\Property(property="content", type="string", example="{\`en\`:\`Welcome\`,\`es\`:\`Bienvenido\`}"),
+     *             @OA\Property(
+     *                 property="tags",
+     *                 type="array",
+     *                 @OA\Items(type="string"),
+     *                 example={"greeating", "welcome"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Translation not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Translation not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function update(UpdateTranslationRequest $request, Translation $translation): JsonResponse
     {
@@ -64,7 +209,40 @@ class TranslationController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/translations/{id}",
+     *     summary="Delete a translation",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *         description="Translation ID"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Translation deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Translation deleted successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Translation not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Translation not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function destroy(Translation $translation): JsonResponse
     {

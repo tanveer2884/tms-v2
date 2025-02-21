@@ -7,8 +7,42 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
+
+/**
+ * @OA\Info(
+ *     title="API Documentation",
+ *     version="1.0.0",
+ *    description="API documentation for tms"
+ * )
+ *
+ * @OA\Tag(
+ *    name="Users",
+ *    description="Endpoints related to users"
+ * )
+ */
 class AuthController extends Controller
 {
+    /**
+     * Store a new user.
+     *
+     * @OA\Post(
+     *     path="/api/register",
+     *     tags={"Users"},
+     *     summary="Create a new user",
+     *     description="Stores user data in the database",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","email","password"},
+     *             @OA\Property(property="name", type="string", example="admin"),
+     *             @OA\Property(property="email", type="string", example="admin@example.com"),
+     *             @OA\Property(property="password", type="string", example="password123"),
+     *             @OA\Property(property="password_confirmation", type="string", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="User created successfully")
+     * )
+     */
     public function register(Request $request): JsonResponse
     {
         $request->validate([
@@ -33,6 +67,24 @@ class AuthController extends Controller
         ], 201);
     }
 
+    /**
+     * Login the user and generate a token.
+     * @OA\Post(
+     *     path="/api/login",
+     *     tags={"Users"},
+     *     summary="Login a user",
+     *     description="Logs in a user and generates a token",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", example="admin@example.com"),
+     *             @OA\Property(property="password", type="string", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="User logged in successfully")
+     *  )
+     */
     public function login(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -59,7 +111,23 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout the user and revoke all tokens.
+     * Logout user (invalidate token).
+     *
+     * @OA\Post(
+     *     path="/api/logout",
+     *     tags={"Authentication"},
+     *     summary="Log out the authenticated user",
+     *     description="Logs out the currently authenticated user by revoking the token.",
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully logged out",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Logged out successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function logout(Request $request): JsonResponse
     {
