@@ -254,11 +254,45 @@ class TranslationController extends Controller
         }
     }
 
-    /**
-     * Search for translations by query.
-     *
-     * @param Request $request
-     * @return JsonResponse
+     /**
+     * @OA\Get(
+     *     path="/api/translations/search",
+     *     summary="Search translations",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\Parameter(
+     *         name="query",
+     *         in="query",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         description="Search query string"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Search results",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="locale", type="string", example="eng"),
+     *                 @OA\Property(property="key", type="string", example="welcome_message"),
+     *                 @OA\Property(property="content", type="string", example="{\`en\`:\`Welcome\`,\`es\`:\`Bienvenido\`}"),
+     *                 @OA\Property(
+     *                     property="tags",
+     *                     type="array",
+     *                     @OA\Items(type="string"),
+     *                     example={"greeating", "welcome"}
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function search(Request $request): JsonResponse
     {

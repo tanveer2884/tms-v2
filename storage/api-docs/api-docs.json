@@ -515,6 +515,86 @@
                     }
                 ]
             }
+        },
+        "/api/translations/search": {
+            "get": {
+                "tags": [
+                    "translations"
+                ],
+                "summary": "Search translations",
+                "operationId": "f022d0e019f5aeba58ffcc9f38a6b96e",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search query string",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "locale": {
+                                                "type": "string",
+                                                "example": "eng"
+                                            },
+                                            "key": {
+                                                "type": "string",
+                                                "example": "welcome_message"
+                                            },
+                                            "content": {
+                                                "type": "string",
+                                                "example": "{\\`en\\`:\\`Welcome\\`,\\`es\\`:\\`Bienvenido\\`}"
+                                            },
+                                            "tags": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "example": [
+                                                    "greeating",
+                                                    "welcome"
+                                                ]
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [

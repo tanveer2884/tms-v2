@@ -22,6 +22,7 @@ class Translation extends Model
     {
         return $query->where('key', 'LIKE', "%{$term}%")
                      ->orWhere('content', 'LIKE', "%{$term}%")
+                     ->orWhere('locale', 'LIKE', "%{$term}%")
                      ->with('tags');
     }
     
