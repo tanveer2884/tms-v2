@@ -303,10 +303,43 @@ class TranslationController extends Controller
 
     
     /**
-     * Get all translations that have a given tag name.
-     *
-     * @param string $tagName
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/translations/tag/{tagName}",
+     *     summary="Get translations by tag name",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\Parameter(
+     *         name="tagName",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         description="Tag name to filter translations"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Translations retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="locale", type="string", example="eng"),
+     *                 @OA\Property(property="key", type="string", example="welcome_message"),
+     *                 @OA\Property(
+     *                     property="tags",
+     *                     type="array",
+     *                     @OA\Items(type="string"),
+     *                     example={"greeating", "welcome"}
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function getTranslationsByTag(string $tagName): JsonResponse
     {
@@ -316,11 +349,44 @@ class TranslationController extends Controller
 
     
     /**
-     * Assign tags to a given translation.
-     *
-     * @param Request $request
-     * @param Translation $translation
-     * @return JsonResponse
+     * @OA\Post(
+     *     path="/api/translations/{id}/assign-tags",
+     *     summary="Assign tags to a translation",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *         description="Translation ID"
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="tags",
+     *                 type="array",
+     *                 @OA\Items(type="string"),
+     *                 example={"greeting", "welcome"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Tags assigned successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Tags assigned successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function assignTags(Request $request, Translation $translation): JsonResponse
     {
@@ -331,9 +397,23 @@ class TranslationController extends Controller
 
     
     /**
-     * Export all translations as a JSON response.
-     *
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/api/translations/export",
+     *     summary="Export all translations",
+     *     security={{"sanctum":{}}},
+     *     tags={"translations"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Exported translations",
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred")
+     *         )
+     *     )
+     * )
      */
     public function export(): JsonResponse
     {

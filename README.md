@@ -1,66 +1,63 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Setup project
+1. copy docker folder to .docker folder. -> cd .docker and in .env
+2. set `COMPOSE_PROJECT_NAME` e.g `tms`
+3. set `HTTP_PORT`, `MYSQL_PORT`, `MYSQL_DATABASE` and `MYSQL_ROOT_PASSWORD`
+## set database connection in main .env 
+1. set DB_HOST= with `db` parameter
+2. RUN `docker compose build`
+3. RUN `docker compose up`
+After successfully setup you login to docker cli using this command
+`docker exec -u docker_app_user -it COMPOSE_PROJECT_NAME_php_service bash` to run php artisan command
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Project Description
+This project is a Translation Management API that allows users to create, update, search, and manage translations for different locales. The API provides features such as translation tagging, searching by tags, assigning tags, and exporting translations. The translations are stored in a structured JSON format to support multiple languages dynamically.
 
-## About Laravel
+## Repository Pattern
+The Repository Pattern is used in this project to decouple the business logic from the data access layer. This offers several benefits:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Separation of Concerns – The repository handles database operations, while services focus on business logic.
+Easier Testing & Maintenance – Mocking repositories makes unit testing more effective.
+Code Reusability – Database queries are centralized, reducing redundancy.
+Improved Scalability – Switching databases or modifying query logic doesn’t affect the business logic layer.
+In this project, the TranslationRepository manages all database interactions, while the TranslationService handles business logic and calls the repository when needed.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Key Benefits of the Repository Pattern
+✅ 1. Separation of Concerns (Clean Code)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Keeps database logic separate from business logic.
+The controller doesn’t directly interact with the database, making the code more structured.
+✅ 2. Easier Maintenance & Scalability
 
-## Learning Laravel
+If the database structure changes, you only need to update the repository instead of multiple parts of the code.
+New data sources (e.g., switching from MySQL to MongoDB) can be integrated without changing the business logic.
+✅ 3. Improves Testability
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Makes unit testing easier by allowing you to mock the repository instead of testing with real database queries.
+Avoids direct database interactions in tests, improving speed and reliability.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Tests
+1. Unit Tests
+Unit tests are used to test individual components (like functions, repositories, or services) in isolation. They ensure that each method works correctly without external dependencies like databases or HTTP requests.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Why Use Unit Tests?
+To verify that the business logic works correctly.
+To catch errors early in individual methods.
+To make debugging easier by testing small parts of the application separately.
 
-## Laravel Sponsors
+2. Feature Tests
+Feature tests simulate real HTTP requests to test the API's behavior as a whole. They check how different components work together, including the controller, service, and database.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+✅ Why Use Feature Tests?
+To validate API endpoints and responses.
+To ensure that user interactions work as expected.
+To test full workflows like creating, updating, or deleting translations.
 
-### Premium Partners
+## Swagger Documentation
+Swagger is integrated into this project for API documentation and testing. It provides:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Interactive API Documentation – Developers can test API endpoints directly in the browser.
+Clear API Contracts – Endpoints, request parameters, and responses are well-documented.
+Standardization – Swagger follows OpenAPI standards, making it easier for other developers to understand and integrate the API.
+The documentation includes endpoints for creating, searching, updating, assigning tags, exporting translations, and more.
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`After project setup you can visit http://localhost/api/documentation for api documentation`
