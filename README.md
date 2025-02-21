@@ -61,3 +61,6 @@ Standardization – Swagger follows OpenAPI standards, making it easier for othe
 The documentation includes endpoints for creating, searching, updating, assigning tags, exporting translations, and more.
 
 `After project setup you can visit http://localhost/api/documentation for api documentation`
+
+To reflect documentation changes in Swagger UI, run the following command:
+`php artisan l5-swagger:generate`

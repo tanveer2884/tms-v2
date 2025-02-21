@@ -85,7 +85,9 @@ class TranslationRepository
 
     public function exportTranslations(): array
     {
-        return Translation::with('tags')->get()->toArray();
+        return Cache::remember('translations_export', now()->addMinutes(10), function () {
+            return Translation::with('tags')->get()->toArray();
+        });
     }
 
 }

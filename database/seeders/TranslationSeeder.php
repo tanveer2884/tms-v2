@@ -13,6 +13,6 @@ class TranslationSeeder extends Seeder
      */
     public function run(): void
     {
-        Translation::factory()->count(100)->create();
+        Translation::factory()->count(1000)->create();
     }
 }
