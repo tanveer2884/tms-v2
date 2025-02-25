@@ -83,11 +83,9 @@ class TranslationRepository
         return $translation->load('tags');
     }
 
-    public function exportTranslations(): array
+    public function exportTranslations()
     {
-        return Cache::remember('translations_export', now()->addMinutes(10), function () {
-            return Translation::with('tags')->get()->toArray();
-        });
+        return Translation::with('tags')->limit(800)->get();
     }
 
 }

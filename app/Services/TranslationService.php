@@ -67,7 +67,7 @@ class TranslationService
         return $this->translationRepository->assignTags($translation, $tags);
     }
 
-    public function exportTranslations(): array
+    public function exportTranslations()
     {
         return $this->translationRepository->exportTranslations();
     }

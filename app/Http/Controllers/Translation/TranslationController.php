@@ -415,9 +415,13 @@ class TranslationController extends Controller
      *     )
      * )
      */
-    public function export(): JsonResponse
+    public function export()
     {
-        $translations = $this->translationService->exportTranslations();
-        return response()->json($translations);
+        try {
+            $translations = $this->translationService->exportTranslations();
+            return response()->json($translations);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
 }

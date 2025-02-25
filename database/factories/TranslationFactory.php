@@ -19,9 +19,12 @@ class TranslationFactory extends Factory
      */
     public function definition(): array
     {
+        $locale = $this->faker->randomElement(['en', 'es', 'fr', 'de']);
+        $uniqueKey = $locale . '-' . $this->faker->unique()->randomNumber(8);
+
         return [
-            'locale' => $this->faker->randomElement(['en', 'es', 'fr', 'de']),
-            'key' => $this->faker->unique()->word,
+            'locale' => $locale,
+            'key' => $uniqueKey,
             'content' => $this->faker->sentence,
         ];
     }
