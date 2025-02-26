@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Translation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use App\Repositories\TranslationRepository;
 
@@ -15,7 +16,7 @@ class TranslationService
         $this->translationRepository = $translationRepository;
     }
 
-    public function getAllTranslations(): Collection
+    public function getAllTranslations(): JsonResponse
     {
         return $this->translationRepository->all();
     }
@@ -67,7 +68,7 @@ class TranslationService
         return $this->translationRepository->assignTags($translation, $tags);
     }
 
-    public function exportTranslations()
+    public function exportTranslations(): JsonResponse
     {
         return $this->translationRepository->exportTranslations();
     }

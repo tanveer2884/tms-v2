@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Translation;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Services\TranslationService;
+use Illuminate\Support\LazyCollection;
 use App\Http\Requests\StoreTranslationRequest;
 use App\Http\Requests\UpdateTranslationRequest;
 
@@ -415,7 +417,7 @@ class TranslationController extends Controller
      *     )
      * )
      */
-    public function export()
+    public function export(): JsonResponse
     {
         try {
             $translations = $this->translationService->exportTranslations();
