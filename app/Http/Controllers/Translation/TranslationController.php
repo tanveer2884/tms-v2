@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Services\TranslationService;
 use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreTranslationRequest;
 use App\Http\Requests\UpdateTranslationRequest;
+use GuzzleHttp\Psr7\Stream;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TranslationController extends Controller
 {
@@ -417,11 +420,10 @@ class TranslationController extends Controller
      *     )
      * )
      */
-    public function export(): JsonResponse
+    public function export(): StreamedResponse | JsonResponse
     {
         try {
-            $translations = $this->translationService->exportTranslations();
-            return response()->json($translations);
+            return $this->translationService->exportTranslations();
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
         }

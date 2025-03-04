@@ -8,7 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Js;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TranslationRepository
 {
@@ -88,22 +89,34 @@ class TranslationRepository
         return $translation->load('tags');
     }
 
-    public function exportTranslations(): JsonResponse
+    public function exportTranslations(): StreamedResponse | JsonResponse
     {
-        $data = DB::table('translations')
-        ->leftJoin('translation_tag', 'translations.id', '=', 'translation_tag.translation_id')
-        ->leftJoin('tags', 'translation_tag.tag_id', '=', 'tags.id')
-        ->select(
-            'translations.id as translation_id',
-            'translations.locale',
-            'translations.key',
-            'translations.content',
-            DB::raw('GROUP_CONCAT(tags.name) as tag_names') // Concatenate tag names
-        )
-            ->groupBy('translations.id')
-            ->get();
+        $filePath = 'translations.json';
 
-        return response()->json($data);
+        if (!Storage::disk('local')->exists($filePath)) {
+            return response()->json(['error' => 'Translations file not found.'], 404);
+        }
+
+        return new StreamedResponse(function () use ($filePath) {
+            $stream = Storage::disk('local')->readStream($filePath);
+
+            if (!$stream) {
+                abort(500, 'Could not open file for reading.');
+            }
+
+            while (!feof($stream)) {
+                echo fread($stream, 4096);
+                flush();
+                ob_flush();
+            }
+
+            fclose($stream);
+        }, 200, [
+            'Content-Type' => 'application/json',
+            'Content-Disposition' => 'inline; filename="translations.json"',
+            'Cache-Control' => 'no-cache',
+            'Connection' => 'keep-alive',
+        ]);
     }
 
 }

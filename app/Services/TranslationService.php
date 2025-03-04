@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\Translation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use App\Jobs\ExportTranslationsJob;
 use App\Repositories\TranslationRepository;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TranslationService
 {
@@ -34,6 +36,7 @@ class TranslationService
             $this->translationRepository->attachTags($translation, $data['tags']);
         }
 
+        ExportTranslationsJob::dispatch();
         return $translation->load('tags');
     }
 
@@ -68,7 +71,7 @@ class TranslationService
         return $this->translationRepository->assignTags($translation, $tags);
     }
 
-    public function exportTranslations(): JsonResponse
+    public function exportTranslations(): StreamedResponse | JsonResponse
     {
         return $this->translationRepository->exportTranslations();
     }
