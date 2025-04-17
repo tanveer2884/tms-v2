@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use Log;
 use App\Models\Translation;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,7 +31,7 @@ class ExportTranslationsJob implements ShouldQueue
         $stream = fopen($tempFile, 'w');
 
         if (!$stream) {
-            \Log::error('ExportTranslationsJob: Failed to create temporary file.');
+            Log::error('ExportTranslationsJob: Failed to create temporary file.');
             return;
         }
 
@@ -61,6 +61,6 @@ class ExportTranslationsJob implements ShouldQueue
         // Delete the temporary file
         unlink($tempFile);
 
-        \Log::info('ExportTranslationsJob: JSON file successfully exported.');
+        Log::info('ExportTranslationsJob: JSON file successfully exported.');
     }
 }

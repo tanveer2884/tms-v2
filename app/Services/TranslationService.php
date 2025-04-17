@@ -37,6 +37,7 @@ class TranslationService
         }
 
         ExportTranslationsJob::dispatch();
+
         return $translation->load('tags');
     }
 
@@ -48,12 +49,16 @@ class TranslationService
             $this->translationRepository->attachTags($translation, $data['tags']);
         }
 
+        ExportTranslationsJob::dispatch();
+
         return $translation->load('tags');
     }
 
     public function deleteTranslation(Translation $translation): bool
     {
-        return $this->translationRepository->delete($translation);
+        $translation = $this->translationRepository->delete($translation);
+        ExportTranslationsJob::dispatch();
+        return $translation;
     }
 
     public function searchTranslations(string $query): Collection
