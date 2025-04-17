@@ -5,24 +5,20 @@ namespace App\Http\Controllers\Translation;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Services\TranslationService;
-use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Facades\Storage;
+use App\Repositories\TranslationRepository;
 use App\Http\Requests\StoreTranslationRequest;
 use App\Http\Requests\UpdateTranslationRequest;
-use GuzzleHttp\Psr7\Stream;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TranslationController extends Controller
 {
 
-    protected $translationService;
+    protected $translationRepository;
 
-    public function __construct(TranslationService $translationService)
+    public function __construct(TranslationRepository $translationRepository)
     {
-        $this->translationService = $translationService;
+        $this->translationRepository = $translationRepository;
     }
     
     /**
@@ -50,7 +46,8 @@ class TranslationController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json($this->translationService->getAllTranslations());
+        $translations = $this->translationRepository->exportTranslations();
+        return response()->json($translations);
     }
 
     /**
@@ -101,7 +98,7 @@ class TranslationController extends Controller
     public function store(StoreTranslationRequest $request): JsonResponse
     {
         try {
-            $translation = $this->translationService->createTranslation($request->only(['locale', 'key', 'content', 'tags']));
+            $translation = $this->translationRepository->create($request->only(['locale', 'key', 'content', 'tags']));
             return response()->json($translation, 201);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -139,10 +136,9 @@ class TranslationController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        return response()->json($this->translationService->getTranslationById($id));
+        return response()->json($this->translationRepository->find($id));
     }
 
-   
     /**
      * @OA\Put(
      *     path="/api/translations/{id}",
@@ -206,7 +202,7 @@ class TranslationController extends Controller
     {
         try {
             $data = $request->only(['locale', 'content', 'tags']);
-            $updatedTranslation = $this->translationService->updateTranslation($translation, $data);
+            $updatedTranslation = $this->translationRepository->update($translation, $data);
             return response()->json($updatedTranslation);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -252,14 +248,14 @@ class TranslationController extends Controller
     public function destroy(Translation $translation): JsonResponse
     {
         try {
-            $this->translationService->deleteTranslation($translation);
+            $this->translationRepository->delete($translation);
             return response()->json(['message' => 'Translation deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/translations/search",
      *     summary="Search translations",
@@ -302,14 +298,14 @@ class TranslationController extends Controller
     public function search(Request $request): JsonResponse
     {
         $query = $request->get('query');
-        $translations = $this->translationService->searchTranslations($query);
+        $translations = $this->translationRepository->searchTranslations($query);
         return response()->json($translations);
     }
 
     
     /**
      * @OA\Get(
-     *     path="/api/translations/tag/{tagName}",
+     *     path="/api/translations/tags/{tagName}",
      *     summary="Get translations by tag name",
      *     security={{"sanctum":{}}},
      *     tags={"translations"},
@@ -348,7 +344,7 @@ class TranslationController extends Controller
      */
     public function getTranslationsByTag(string $tagName): JsonResponse
     {
-        $translations = $this->translationService->getTranslationsByTag($tagName);
+        $translations = $this->translationRepository->getTranslationsByTag($tagName);
         return response()->json($translations);
     }
 
@@ -396,7 +392,7 @@ class TranslationController extends Controller
     public function assignTags(Request $request, Translation $translation): JsonResponse
     {
         $tags = $request->get('tags', []);
-        $translation = $this->translationService->assignTagsToTranslation($translation, $tags);
+        $translation = $this->translationRepository->assignTags($translation, $tags);
         return response()->json($translation);
     }
 
@@ -423,7 +419,7 @@ class TranslationController extends Controller
     public function export(): StreamedResponse | JsonResponse
     {
         try {
-            return $this->translationService->exportTranslations();
+            return $this->translationRepository->exportTranslations();
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
         }

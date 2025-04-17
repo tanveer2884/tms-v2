@@ -64,3 +64,7 @@ The documentation includes endpoints for creating, searching, updating, assignin
 
 To reflect documentation changes in Swagger UI, run the following command:
 `php artisan l5-swagger:generate`
+
+## Run Queue worker
+1. login into docker container
+RUN `php artisan queue:work`

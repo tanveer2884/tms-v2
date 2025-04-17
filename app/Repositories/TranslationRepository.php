@@ -7,21 +7,13 @@ use App\Models\Translation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\ExportTranslationsJob;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TranslationRepository
 {
-    public function all(): JsonResponse
-    {
-        $data = DB::table('translations')
-        ->select('id', 'locale', 'key', 'content', 'created_at', 'updated_at')
-        ->get();
-
-        return response()->json($data);
-    }
-
     public function find(int $id): Translation
     {
         return Cache::remember("translations.{$id}", 60, function () use ($id) {
@@ -31,8 +23,15 @@ class TranslationRepository
 
     public function create(array $data): Translation
     {
-        Cache::forget('translations.all');
-        return Translation::create($data);
+        $translation =Translation::create($data);
+
+        if (isset($data['tags'])) {
+            $this->attachTags($translation, $data['tags']);
+        }
+
+        ExportTranslationsJob::dispatch();
+        
+        return $translation->load('tags');
     }
 
 
@@ -63,7 +62,7 @@ class TranslationRepository
         return $translation;
     }
 
-    public function search(string $query): Collection
+    public function searchTranslations(string $query): Collection
     {
         return Translation::search($query)->get();
     }

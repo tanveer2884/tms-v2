@@ -596,13 +596,13 @@
                 ]
             }
         },
-        "/api/translations/tag/{tagName}": {
+        "/api/translations/tags/{tagName}": {
             "get": {
                 "tags": [
                     "translations"
                 ],
                 "summary": "Get translations by tag name",
-                "operationId": "ba5b0486581c3b53e43e20d55f421209",
+                "operationId": "857d1548ac310732521ce5ef7ca1cfee",
                 "parameters": [
                     {
                         "name": "tagName",
