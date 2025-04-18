@@ -52,7 +52,7 @@ class TranslationRepositoryTest extends TestCase
     public function test_can_search_translations(): void
     {
         Translation::factory()->create(['key' => 'test_key', 'content' => 'Test Content']);
-        $results = $this->repository->search('test_key');
+        $results = $this->repository->searchTranslations('test_key');
         $this->assertNotEmpty($results);
     }
 

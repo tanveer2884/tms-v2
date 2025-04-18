@@ -21,9 +21,9 @@ class Translation extends Model
     public function scopeSearch(Builder $query, string $term): Builder
     {
         return $query->where('key', 'LIKE', "%{$term}%")
-                     ->orWhere('content', 'LIKE', "%{$term}%")
-                     ->orWhere('locale', 'LIKE', "%{$term}%")
-                     ->with('tags');
+                    ->orWhere('content', 'LIKE', "%{$term}%")
+                    ->orWhere('locale', 'LIKE', "%{$term}%")
+                    ->with('tags');
     }
     
     public function tags(): BelongsToMany

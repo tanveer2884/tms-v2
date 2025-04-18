@@ -58,7 +58,7 @@ class TranslationApiTest extends TestCase
     {
         Translation::factory()->create(['key' => 'searchable_key', 'content' => 'Searchable Content']);
 
-        $this->getJson(route('translations.index', ['search' => 'searchable_key']))
+        $this->getJson(route('translations.search', ['query' => 'searchable_key']))
             ->assertStatus(200)
             ->assertJsonFragment(['key' => 'searchable_key']);
     }

@@ -10,7 +10,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('translations/tags/{tagName}', [TranslationController::class, 'getTranslationsByTag']);
-    Route::get('translations/search', [TranslationController::class, 'search']);
+    Route::get('translations/search', [TranslationController::class, 'search'])->name('translations.search');
     Route::post('translations/{translation}/assign-tags', [TranslationController::class, 'assignTags']);
     Route::get('translations/export', [TranslationController::class, 'export']);
     Route::apiResource('translations', TranslationController::class);

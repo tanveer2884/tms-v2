@@ -55,13 +55,20 @@ class TranslationPerformanceTest extends TestCase
 
     public function testAssignTagsPerformance()
     {
-        $translation = Translation::first();
-        $tags = Tag::pluck('id')->take(3)->toArray();
+        // Create translation and tags if not present
+        $translation = Translation::first() ?? Translation::factory()->create();
+        $tags = Tag::pluck('id')->take(3);
+
+        // If not enough tags exist, create them
+        if ($tags->count() < 3) {
+            Tag::factory()->count(3 - $tags->count())->create();
+            $tags = Tag::pluck('id')->take(3);
+        }
 
         $start = microtime(true);
 
         $response = $this->postJson("/api/translations/{$translation->id}/assign-tags", [
-            'tag_ids' => $tags
+            'tag_ids' => $tags->toArray()
         ]);
 
         $response->assertStatus(200);

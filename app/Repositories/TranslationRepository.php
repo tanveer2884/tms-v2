@@ -67,6 +67,7 @@ class TranslationRepository
         return Translation::search($query)->get();
     }
 
+
     public function getTranslationsByTag(string $tagName): Collection
     {
         return Translation::whereHas('tags', function ($query) use ($tagName) {
